@@ -1,0 +1,8 @@
+.DS_Store
+*/*.env
+*/rebuild.sh
+bitbucket-pipelines.yml
+start.sh
+deployments/old/
+deployments/yaml/
+docs/swagger/examples/

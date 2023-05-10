@@ -1,0 +1,25 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: {{ .Chart.Name }}-ui
+  name: {{ .Chart.Name }}-ui
+  namespace: {{ .Values.namespace }} 
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: {{ .Chart.Name }}-ui
+  template:
+    metadata:
+      labels:
+        app: {{ .Chart.Name }}-ui
+        tier: catalog
+    spec:
+      containers:
+        - image: "{{ .Values.connectorUi.image.repository }}:{{ .Values.connectorUi.image.tag | default .Chart.AppVersion }}"
+          imagePullPolicy: {{ .Values.connectorUi.image.pullPolicy }}
+          name: {{ .Chart.Name }}-ui
+          ports:
+            - name: {{ .Values.connectorUi.service.portName }}
+              containerPort: {{ .Values.connectorUi.service.port }}

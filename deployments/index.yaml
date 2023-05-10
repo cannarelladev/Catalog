@@ -1,0 +1,17 @@
+apiVersion: v1
+entries:
+  connector:
+  - apiVersion: v2
+    appVersion: "0.1"
+    created: "2023-06-21T11:13:54.390852+02:00"
+    description: A Helm chart for Catalog Connector
+    digest: 7f57cf5616a05a21faa32875fd9e2f6a3f008f744ce22c642bfb251554b05150
+    maintainers:
+    - email: cannarella.dev@gmail.com
+      name: cannarelladev
+    name: connector
+    type: application
+    urls:
+    - https://cannarelladev.github.io/Catalog/deployments/connector-0.1.0.tgz
+    version: 0.1.0
+generated: "2023-06-21T11:13:54.389429+02:00"

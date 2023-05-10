@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ .Chart.Name }}-ui
+  namespace: {{ .Values.namespace }}
+spec:
+  selector:
+    app: {{ .Chart.Name }}-ui
+    tier: catalog
+  ports:
+    - name: {{ .Values.connectorUi.service.portName }}
+      protocol: TCP
+      port: {{ .Values.connectorUi.service.port }}
+      targetPort: {{ .Values.connectorUi.service.targetPort }}
+  type: {{ .Values.connectorUi.service.type }}

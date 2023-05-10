@@ -1,0 +1,23 @@
+version: "3.8"
+services:
+  db:
+    image: mongo
+    container_name: brokerdb
+    environment:
+        - PUID=1000
+        - PGID=1000
+      #volumes:
+      #- /home/barry/mongodb/database:/data/db
+    ports:
+        - 27018:27017
+    restart: unless-stopped
+  broker:
+    image: cannarelladev/catalog-broker:v0.1
+    pull_policy: always
+    container_name: broker
+    environment:
+        - BROKER_UUID=4c08ebb5-0bd6-430a-a308-20ca9e1b7041
+        - JWT_SECRET=eyJhbGciOiJIUzI1NiJ9.eyJSb2xlIjoiU3VwZXIgQWRtaW4iLCJJc3N1ZXIiOiJicm9rZXItYWRtaW4iLCJVc2VybmFtZSI6ImNubmRldiIsImV4cCI6MTY5ODE0MDg5NCwiaWF0IjoxNjY2NjA0ODk0fQ.qFrTBi_GJypIIVFm3il18zxF84cS41KSfclvL6ttWGQ
+        - MONGODB_URL=mongodb://db:27017
+    ports:
+      - 8000:8000

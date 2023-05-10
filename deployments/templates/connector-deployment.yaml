@@ -1,0 +1,52 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: {{ .Chart.Name }}
+  name: {{ .Chart.Name }}
+  namespace: {{ .Values.namespace }}
+spec:
+  replicas: {{ .Values.connector.replicaCount }}
+  selector:
+    matchLabels:
+      app: {{ .Chart.Name }}
+  template:
+    metadata:
+      labels:
+        tier: catalog
+        app: {{ .Chart.Name }}
+    spec:
+      serviceAccountName: {{ .Values.serviceAccount.name }}
+      containers:
+        - image: "{{ .Values.connector.image.repository }}:{{ .Values.connector.image.tag | default .Chart.AppVersion }}"
+          resources:
+            limits:
+              ephemeral-storage: "1Gi"
+          imagePullPolicy: {{ .Values.connector.image.pullPolicy }}
+          name: {{ .Chart.Name }}
+          ports:
+            - name: {{ .Values.connector.serviceHttp.portName }}
+              containerPort: {{ .Values.connector.config.httpPort }}
+            - name: {{ .Values.connector.serviceGrpc.portName }}
+              containerPort: {{ .Values.connector.config.grpcPort }}
+          args:
+            {{- if .Values.connector.config.grpcPort }}
+            - --grpc-port={{ .Values.connector.config.grpcPort }}
+            {{- end }}
+            {{- if .Values.connector.config.httpPort }}
+            - --http-port={{ .Values.connector.config.httpPort }}
+            {{- end }}
+            {{- if .Values.connector.config.mongoEndpoint }}
+            - --mongo-endpoint={{ .Values.connector.config.mongoEndpoint }}
+            {{- end }}
+            {{- if .Values.connector.config.mongoPort }}
+            - --mongo-port={{ .Values.connector.config.mongoPort }}
+            {{- end }}
+            {{- if .Values.connector.config.mongoCredentials }}
+            {{- if .Values.connector.config.mongoCredentials.username }}
+            - --mongo-username={{ .Values.connector.config.mongoCredentials.username }}
+            {{- end }}
+            {{- if .Values.connector.config.mongoCredentials.password }}
+            - --mongo-password={{ .Values.connector.config.mongoCredentials.password }}
+            {{- end }}
+            {{- end }}

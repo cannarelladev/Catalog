@@ -1,0 +1,95 @@
+# Default values for connector-chart.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+
+# -- Define the namespace where the chart will be deployed
+namespace: catalog
+
+# -- Define a host for the ingress. It must match with the TLS certificate's host if present
+host: "catalog.top-ix.org"
+
+connector:
+  # -- Define the number of replicas for the connector
+  replicaCount: 1
+  image:
+    # -- Define the image name for the connector
+    repository: cannarelladev/connector
+    # -- Define the policy for the image pull
+    pullPolicy: Always
+    # -- Overrides the image tag whose default is the chart appVersion.
+    tag: "v0.1"
+  # The following values are used to configure the connector
+  config:
+    # -- The gRPC port for the grpc server of the connector
+    grpcPort: 6001
+    # -- The http port for the http server of the connector
+    httpPort: 6002
+    # -- The MongoDB endpoint that hosts the connector's database
+    mongoEndpoint: <YOUR-MONGO-ENDPOINT>
+    # -- The MongoDB port that hosts the connector's database
+    mongoPort: 27017
+    # The MongoDB credentials. you must specify at least the user and the password
+    mongoCredentials: 
+      # -- The MongoDB database user
+      username: 
+      # -- The MongoDB database password
+      password: 
+  # The following values are used to configure the connector's services
+  # Connector uses two different services, one for the grpc server and one for the http server
+  serviceHttp:
+    # -- The name of the service of the connector http server 
+    name: connector-http
+    # -- The name of the port exposed by the service
+    portName: http
+    # -- The type of the service
+    type: ClusterIP
+    # -- The port exposed by the service
+    port: 6002
+    # -- The port exposed by the connector's pod
+    targetPort: 6002
+  serviceGrpc:
+    # -- The name of the service of the connector grpc server
+    name: connector-grpc
+    # -- The name of the port exposed by the service
+    portName: grpc
+    # -- The type of the service
+    type: ClusterIP
+    # -- The port exposed by the service
+    port: 6001
+    # -- The port exposed by the connector's pod
+    targetPort: 6001  
+
+# The following values are used to configure the connector-ui, the web interface of the connector
+connectorUi:
+  # -- Define the number of replicas for the connector-ui
+  replicaCount: 1
+  image:
+    # -- Define the image name for the connector-ui
+    repository: cannarelladev/connector-ui
+    # -- Define the policy for the image pull
+    pullPolicy: IfNotPresent
+    # Overrides the image tag whose default is the chart appVersion.
+    tag: "v0.1"
+  # The following values are used to configure the connector-ui service
+  service:
+    # -- The name of the service of the connector-ui
+    name: connector-ui
+    # -- The name of the port exposed by the service
+    portName: ui
+    # -- The type of the service
+    type: ClusterIP
+    # -- The port exposed by the service
+    port: 8080
+    # -- The port exposed by the connector-ui's pod
+    targetPort: 8080
+
+# The following values are used to configure the service account of the connector
+serviceAccount:
+  # -- Specifies whether a service account should be created
+  create: true
+  # -- Annotations to add to the service account
+  annotations: {}
+  # -- The name of the service account to use.
+  # If not set and create is true, a name is generated using the fullname template
+  name: connector
+

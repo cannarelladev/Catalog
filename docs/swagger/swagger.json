@@ -1,0 +1,914 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "Server API",
+    "version": "1.0.0",
+    "description": "These are the endpoints for the Connector Server API",
+    "contact": {
+      "name": "Alessandro Cannarella",
+      "email": "cannarella.dev@gmail.com"
+    },
+    "license": {
+      "name": "Apache 2.0",
+      "url": "http://www.apache.org/licenses/LICENSE-2.0.html"
+    }
+  },
+  "basePath": "/api",
+  "schemes": [
+    "http"
+  ],
+  "tags": [
+    {
+      "name": "catalog",
+      "description": "Usefull to retrieve the catalogs of the federation",
+      "externalDocs": {
+        "description": "Find out more",
+        "url": "TODO"
+      }
+    },
+    {
+      "name": "cluster",
+      "description": "Operations about Connector and cluster configuration",
+      "externalDocs": {
+        "description": "Find out more",
+        "url": "TODO"
+      }
+    },
+    {
+      "name": "contracts",
+      "description": "Operations about contracts"
+    },
+    {
+      "name": "offers",
+      "description": "Operations about offers",
+      "externalDocs": {
+        "description": "Find out more",
+        "url": "TODO"
+      }
+    },
+    {
+      "name": "peer",
+      "description": "Operations about peerings",
+      "externalDocs": {
+        "description": "Find out more",
+        "url": "TODO"
+      }
+    },
+    {
+      "name": "brokers",
+      "description": "Operations about brokers",
+      "externalDocs": {
+        "description": "Find out more",
+        "url": "TODO"
+      }
+    }
+  ],
+  "paths": {
+    "/catalog": {
+      "get": {
+        "tags": [
+          "catalog"
+        ],
+        "summary": "Get remote catalogs",
+        "description": "Returns the catalogs of the federation",
+        "operationId": "getRemoteCatalogs",
+        "produces": [
+          "application/json"
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/definitions/Catalog"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/contracts": {
+      "get": {
+        "tags": [
+          "contracts"
+        ],
+        "summary": "Get contracts",
+        "operationId": "getContracts",
+        "produces": [
+          "application/json"
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/definitions/ContractDocument"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/subscribe": {
+      "get": {
+        "summary": "Subscribe UI client to the server",
+        "description": "Subscribe UI client to the server with a websocket connection for real-time updates",
+        "operationId": "subscribeClient",
+        "responses": {
+          "200": {
+            "description": "Successful operation"
+          }
+        }
+      }
+    },
+    "/offers": {
+      "post": {
+        "tags": [
+          "offers"
+        ],
+        "summary": "Create an offer",
+        "description": "Create an offer to be published in the catalog",
+        "operationId": "postOffer",
+        "produces": [
+          "application/json"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "$ref": "#/definitions/Offer"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful operation"
+          }
+        }
+      },
+      "get": {
+        "tags": [
+          "offers"
+        ],
+        "summary": "Get your offers",
+        "description": "Returns your offers collection",
+        "operationId": "getOffers",
+        "responses": {
+          "200": {
+            "description": "Successful operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/definitions/Offer"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/offers/{id}": {
+      "delete": {
+        "tags": [
+          "offers"
+        ],
+        "summary": "Delete an offer",
+        "description": "Delete an offer from your catalog",
+        "operationId": "deleteOffer",
+        "consumes": [
+          "multipart/form-data"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "Offer ID",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful operation"
+          }
+        }
+      }
+    },
+    "/peer": {
+      "post": {
+        "tags": [
+          "peer"
+        ],
+        "summary": "Create a peering",
+        "operationId": "createPeering",
+        "description": "Create a peering with a remote cluster based on an existing contract",
+        "consumes": [
+          "multipart/form-data"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "query",
+            "description": "Cluster ID",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "name",
+            "in": "query",
+            "description": "Cluster name",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "authtoken",
+            "in": "query",
+            "description": "Cluster token",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "authurl",
+            "in": "query",
+            "description": "Cluster auth url",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful operation"
+          }
+        }
+      },
+      "get": {
+        "deprecated": true,
+        "tags": [
+          "peer"
+        ],
+        "summary": "Get peerings",
+        "description": "Get existing peerings - [NOT IMPLEMENTED]",
+        "operationId": "getPeerings",
+        "responses": {
+          "200": {
+            "description": "Successful operation"
+          }
+        }
+      },
+      "delete": {
+        "deprecated": true,
+        "tags": [
+          "peer"
+        ],
+        "summary": "Delete a peering",
+        "description": "Delete a peering with a remote cluster - [NOT IMPLEMENTED]",
+        "operationId": "deletePeering",
+        "responses": {
+          "200": {
+            "description": "Successful operation"
+          }
+        }
+      }
+    },
+    "/brokers": {
+      "get": {
+        "tags": [
+          "brokers"
+        ],
+        "summary": "Get brokers",
+        "description": "Returns the list of brokers registered in the system",
+        "operationId": "getBrokers",
+        "responses": {
+          "200": {
+            "description": "Successful operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/definitions/BrokerDocument"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "brokers"
+        ],
+        "summary": "Register a broker",
+        "description": "Register a broker in the system to be able to publish offers in the federation",
+        "operationId": "registerBroker",
+        "consumes": [
+          "multipart/form-data"
+        ],
+        "parameters": [
+          {
+            "name": "name",
+            "in": "query",
+            "description": "Broker name",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "path",
+            "in": "query",
+            "description": "The broker endpoint",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful operation"
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "brokers"
+        ],
+        "summary": "Unregister a broker",
+        "description": "Unregister a broker from the system",
+        "operationId": "unregisterBroker",
+        "consumes": [
+          "multipart/form-data"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "query",
+            "description": "Broker ID",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful operation"
+          }
+        }
+      }
+    },
+    "/cluster/init": {
+      "get": {
+        "tags": [
+          "cluster"
+        ],
+        "summary": "Get ready catalog",
+        "operationId": "getReadyCatalog",
+        "description": "Get the information for the readiness of the catalog, so if it is configured and ready to be used",
+        "responses": {
+          "200": {
+            "description": "Successful operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "ready": {
+                      "type": "boolean"
+                    }
+                  },
+                  "example": {
+                    "ready": true
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "cluster"
+        ],
+        "summary": "Initiate catalog",
+        "description": "Initiate the catalog with the information of the cluster: Pretty Name and Contract Endpoint",
+        "operationId": "initCatalog",
+        "consumes": [
+          "multipart/form-data"
+        ],
+        "parameters": [
+          {
+            "name": "prettyname",
+            "in": "query",
+            "description": "Cluster pretty name",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "endpoint",
+            "in": "query",
+            "description": "Contract endpoint",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful operation"
+          }
+        }
+      }
+    },
+    "/cluster/parameters": {
+      "get": {
+        "tags": [
+          "cluster"
+        ],
+        "summary": "Get cluster parameters",
+        "description": "Get the Cluster parameters about Liqo",
+        "operationId": "getClusterParameters",
+        "responses": {
+          "200": {
+            "description": "Successful operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/definitions/ClusterParameters"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/cluster/prettyname": {
+      "get": {
+        "tags": [
+          "cluster"
+        ],
+        "summary": "Get cluster pretty name",
+        "description": "Get the Cluster pretty name",
+        "operationId": "getClusterPrettyName",
+        "produces": [
+          "application/json"
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "prettyName": {
+                      "type": "string"
+                    }
+                  },
+                  "example": {
+                    "prettyName": "Example Cluster"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "cluster"
+        ],
+        "summary": "Set cluster pretty name",
+        "description": "Set the Cluster pretty name",
+        "operationId": "setClusterPrettyName",
+        "consumes": [
+          "multipart/form-data"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "query",
+            "description": "Cluster pretty name",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful operation"
+          }
+        }
+      }
+    },
+    "/cluster/contractendpoint": {
+      "get": {
+        "tags": [
+          "cluster"
+        ],
+        "summary": "Get contract endpoint",
+        "description": "Get the Cluster contract endpoint",
+        "operationId": "getContractEndpoint",
+        "produces": [
+          "application/json"
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "contractEndpoint": {
+                      "type": "string"
+                    }
+                  },
+                  "example": {
+                    "contractEndpoint": "http://example.com/contracts"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "cluster"
+        ],
+        "summary": "Set contract endpoint",
+        "description": "Set the Cluster contract endpoint",
+        "operationId": "setContractEndpoint",
+        "consumes": [
+          "multipart/form-data"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "query",
+            "description": "Contract endpoint",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful operation"
+          }
+        }
+      }
+    },
+    "/contracts/buy": {
+      "post": {
+        "tags": [
+          "contracts"
+        ],
+        "summary": "Buy a contract",
+        "description": "Buy an available offer plan from a foreign cluster and stipulate a contract with it",
+        "operationId": "buyContract",
+        "consumes": [
+          "multipart/form-data"
+        ],
+        "parameters": [
+          {
+            "name": "plan-id",
+            "in": "query",
+            "description": "Plan ID",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "offer-id",
+            "in": "query",
+            "description": "Offer ID",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/definitions/ContractDocument"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/contracts/sell": {
+      "post": {
+        "tags": [
+          "contracts"
+        ],
+        "summary": "Sell a contract",
+        "description": "Sell an available offer plan to a foreign cluster and stipulate a contract with it",
+        "operationId": "sellContract",
+        "consumes": [
+          "multipart/form-data"
+        ],
+        "parameters": [
+          {
+            "name": "plan-id",
+            "in": "query",
+            "description": "Plan ID",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "offer-id",
+            "in": "query",
+            "description": "Offer ID",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "buyer-id",
+            "in": "query",
+            "description": "Buyer ID",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/definitions/ContractDocument"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "definitions": {
+    "Catalog": {
+      "type": "object",
+      "properties": {
+        "offers": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/Offer"
+          }
+        },
+        "clusterContractEndpoint": {
+          "type": "string",
+          "example": "http://example.com/contracts"
+        },
+        "created": {
+          "type": "integer",
+          "example": "1234567890"
+        },
+        "clusterName": {
+          "type": "string",
+          "example": "example-cluster"
+        },
+        "clusterID": {
+          "type": "string",
+          "example": "123e4567-e89b-12d3-a456-426655440000"
+        },
+        "endpoint": {
+          "type": "string",
+          "example": "http://example.com:8080"
+        },
+        "token": {
+          "type": "string",
+          "example": "1234567890123456789012345678901234567890123456789012345678901234"
+        }
+      },
+      "required": [
+        "offers",
+        "clusterContractEndpoint",
+        "created",
+        "clusterName",
+        "clusterID",
+        "endpoint",
+        "token"
+      ]
+    },
+    "Offer": {
+      "type": "object",
+      "properties": {
+        "offerID": {
+          "type": "string",
+          "example": "123e4567-e89b-12d3-a456-426655440000"
+        },
+        "offerName": {
+          "type": "string",
+          "example": "Example Offer"
+        },
+        "offerType": {
+          "type": "string",
+          "example": "computational"
+        },
+        "description": {
+          "type": "string",
+          "example": "Example Offer Description"
+        },
+        "plans": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/Plan"
+          }
+        },
+        "clusterPrettyName": {
+          "type": "string",
+          "example": "Example Cluster"
+        },
+        "created": {
+          "type": "integer",
+          "example": "1234567890"
+        },
+        "status": {
+          "type": "boolean",
+          "example": true
+        }
+      }
+    },
+    "Plan": {
+      "type": "object",
+      "properties": {
+        "planID": {
+          "type": "string",
+          "example": "123e4567-e89b-12d3-a456-426655440000_1"
+        },
+        "planName": {
+          "type": "string",
+          "example": "Basic"
+        },
+        "planCost": {
+          "type": "number",
+          "example": 50.99
+        },
+        "planCostCurrency": {
+          "type": "string",
+          "example": "USD"
+        },
+        "planCostPeriod": {
+          "type": "string",
+          "example": "month"
+        },
+        "planQuantity": {
+          "type": "integer",
+          "example": 10
+        },
+        "resources": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "ContractDocument": {
+      "type": "object",
+      "properties": {
+        "contractID": {
+          "type": "string",
+          "example": "5d6a3b9e-9f9e-4a0e-8d1a-5a0f0a2e1a0a"
+        },
+        "buyerID": {
+          "type": "string",
+          "example": "5d6a3b9e-9f9e-4a0e-8d1a-5a0f0a2e1a0b"
+        },
+        "seller": {
+          "$ref": "#/definitions/Provider"
+        },
+        "offer": {
+          "$ref": "#/definitions/Offer"
+        },
+        "planID": {
+          "type": "string",
+          "example": "123e4567-e89b-12d3-a456-426655440000_1"
+        },
+        "enabled": {
+          "type": "boolean",
+          "example": true
+        },
+        "created": {
+          "type": "integer",
+          "example": "1234567890"
+        }
+      },
+      "required": [
+        "contractID",
+        "buyerID",
+        "seller",
+        "offer",
+        "planID",
+        "enabled",
+        "created"
+      ]
+    },
+    "Provider": {
+      "type": "object",
+      "properties": {
+        "clusterPrettyName": {
+          "type": "string",
+          "example": "Example Cluster"
+        },
+        "clusterContractEndpoint": {
+          "type": "string",
+          "example": "http://example.com/contracts"
+        },
+        "clusterName": {
+          "type": "string",
+          "example": "example-cluster"
+        },
+        "clusterID": {
+          "type": "string",
+          "example": "7d6a3b9e-9f9e-4a0e-8d1a-5a0f0a2e1a0a"
+        },
+        "endpoint": {
+          "type": "string",
+          "example": "http://example.com:8080"
+        },
+        "token": {
+          "type": "string",
+          "example": "1234567890123456789012345678901234567890123456789012345678901234"
+        }
+      },
+      "required": [
+        "clusterPrettyName",
+        "clusterContractEndpoint",
+        "ClusterParameters"
+      ]
+    },
+    "ClusterParameters": {
+      "type": "object",
+      "properties": {
+        "clusterName": {
+          "type": "string",
+          "example": "example-cluster"
+        },
+        "clusterID": {
+          "type": "string",
+          "example": "7d6a3b9e-9f9e-4a0e-8d1a-5a0f0a2e1a0a"
+        },
+        "endpoint": {
+          "type": "string",
+          "example": "http://example.com:36280"
+        },
+        "token": {
+          "type": "string",
+          "example": "1234567890123456789012345678901234567890123456789012345678901234"
+        }
+      },
+      "required": [
+        "clusterName",
+        "clusterID",
+        "endpoint",
+        "token"
+      ]
+    },
+    "BrokerDocument": {
+      "type": "object",
+      "properties": {
+        "brokerID": {
+          "type": "string",
+          "example": "6d6a3b9e-9f9e-4a0e-8d1a-5a0f0a2e1a0a"
+        },
+        "brokerName": {
+          "type": "string",
+          "example": "Example Broker"
+        },
+        "brokerEndpoint": {
+          "type": "string",
+          "example": "http://broker.example.com:8080"
+        },
+        "jwt-token": {
+          "type": "string",
+          "example": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJib3QiOiJleGFtcGxlLmNvbSIsInNhb"
+        },
+        "subscribed": {
+          "type": "boolean",
+          "example": true
+        }
+      },
+      "required": [
+        "brokerID",
+        "brokerName",
+        "brokerEndpoint",
+        "jwt-token",
+        "subscribed"
+      ]
+    }
+  }
+}

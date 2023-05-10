@@ -1,0 +1,33 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: "{{ .Chart.Name }}-http"
+  namespace: {{ .Values.namespace }}
+spec:
+  selector:
+    app: {{ .Chart.Name }}
+    tier: catalog
+  ports:
+    - protocol: TCP
+      name: {{ .Values.connector.serviceHttp.portName }}
+      port: {{ .Values.connector.serviceHttp.port }}
+      targetPort: {{ .Values.connector.serviceHttp.targetPort }}
+  type: {{ .Values.connector.serviceHttp.type}}
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ .Chart.Name }}-grpc
+  namespace: {{ .Values.namespace }}
+spec:
+  selector:
+    app: {{ .Chart.Name }}
+    tier: catalog
+  ports:
+    - protocol: TCP
+      name: {{ .Values.connector.serviceGrpc.portName }}
+      port: {{ .Values.connector.serviceGrpc.port }}
+      targetPort: {{ .Values.connector.serviceGrpc.targetPort }}
+  type: {{ .Values.connector.serviceGrpc.type}}

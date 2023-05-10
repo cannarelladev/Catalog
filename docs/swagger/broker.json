@@ -1,0 +1,456 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "version": "1.0.0",
+    "title": "Connector Server API",
+    "contact": {
+      "name": "Alessandro Cannarella",
+      "email": "cannarella.dev@gmail.com"
+    },
+    "license": {
+      "name": "Apache 2.0",
+      "url": "http://www.apache.org/licenses/LICENSE-2.0.html"
+    }
+  },
+  "servers": [
+    {
+      "url": "/"
+    }
+  ],
+  "paths": {
+    "/catalog": {
+      "get": {
+        "summary": "Get catalog",
+        "description": "Get the federation aggregated catalog",
+        "security": [
+          {
+            "jwt": []
+          }
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Catalog"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/offer/{id}": {
+      "post": {
+        "summary": "Create or update offer",
+        "description": "Usefull for a Provider to pubblish a new offer or update an existing one",
+        "security": [
+          {
+            "jwt": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Offer ID"
+          }
+        ],
+        "consumes": [
+          "multipart/form-data"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Offer"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/StatusResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid input",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "summary": "Delete offer",
+        "security": [
+          {
+            "jwt": []
+          }
+        ],
+        "description": "Usefull for a Provider to delete an offer",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Offer ID"
+          }
+        ],
+        "consumes": [
+          "multipart/form-data"
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/StatusResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/offers": {
+      "post": {
+        "summary": "Create or update multiple offers",
+        "security": [
+          {
+            "jwt": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/Offer"
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/StatusResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid input",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "Offer": {
+        "type": "object",
+        "properties": {
+          "offerID": {
+            "type": "string"
+          },
+          "offerName": {
+            "type": "string"
+          },
+          "offerType": {
+            "type": "string"
+          },
+          "clusterPrettyName": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "plans": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Plan"
+            }
+          },
+          "created": {
+            "type": "number"
+          },
+          "status": {
+            "type": "boolean"
+          },
+          "clusterID": {
+            "type": "string"
+          }
+        },
+        "example": {
+          "offerID": "offer1",
+          "offerName": "Offer 1",
+          "offerType": "Type 1",
+          "clusterPrettyName": "Cluster 1",
+          "description": "Offer 1 description",
+          "plans": [
+            {
+              "planID": "plan1",
+              "planName": "Plan 1",
+              "planCost": 10.99,
+              "planCostCurrency": "USD",
+              "planCostPeriod": "monthly",
+              "planQuantity": 1,
+              "resources": {
+                "cpu": "2",
+                "memory": "4GB",
+                "storage": "100GB",
+                "gpu": "N/A"
+              }
+            }
+          ],
+          "created": 1623753566000,
+          "status": true,
+          "clusterID": "cluster1"
+        }
+      },
+      "Plan": {
+        "type": "object",
+        "properties": {
+          "planID": {
+            "type": "string"
+          },
+          "planName": {
+            "type": "string"
+          },
+          "planCost": {
+            "type": "number"
+          },
+          "planCostCurrency": {
+            "type": "string"
+          },
+          "planCostPeriod": {
+            "type": "string"
+          },
+          "planQuantity": {
+            "type": "number"
+          },
+          "resources": {
+            "$ref": "#/components/schemas/Resource"
+          }
+        },
+        "example": {
+          "planID": "plan1",
+          "planName": "Plan 1",
+          "planCost": 10.99,
+          "planCostCurrency": "USD",
+          "planCostPeriod": "monthly",
+          "planQuantity": 1,
+          "resources": {
+            "cpu": "2",
+            "memory": "4GB",
+            "storage": "100GB",
+            "gpu": "N/A"
+          }
+        }
+      },
+      "Resource": {
+        "type": "object",
+        "properties": {
+          "cpu": {
+            "type": "string"
+          },
+          "memory": {
+            "type": "string"
+          },
+          "storage": {
+            "type": "string"
+          },
+          "gpu": {
+            "type": "string"
+          }
+        },
+        "example": {
+          "cpu": "2",
+          "memory": "4GB",
+          "storage": "100GB",
+          "gpu": "N/A"
+        }
+      },
+      "Provider": {
+        "type": "object",
+        "properties": {
+          "clusterID": {
+            "type": "string"
+          },
+          "clusterName": {
+            "type": "string"
+          },
+          "token": {
+            "type": "string"
+          },
+          "endpoint": {
+            "type": "string"
+          },
+          "clusterContractEndpoint": {
+            "type": "string"
+          }
+        },
+        "example": {
+          "clusterID": "cluster1",
+          "clusterName": "Cluster 1",
+          "token": "token1",
+          "endpoint": "https://cluster1.example.com",
+          "clusterContractEndpoint": "https://cluster1.example.com/contract"
+        }
+      },
+      "Catalog": {
+        "type": "object",
+        "properties": {
+          "clusterID": {
+            "type": "string"
+          },
+          "clusterName": {
+            "type": "string"
+          },
+          "token": {
+            "type": "string"
+          },
+          "endpoint": {
+            "type": "string"
+          },
+          "clusterContractEndpoint": {
+            "type": "string"
+          },
+          "offers": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Offer"
+            }
+          }
+        },
+        "example": {
+          "clusterID": "cluster1",
+          "clusterName": "Cluster 1",
+          "token": "token1",
+          "endpoint": "https://cluster1.example.com",
+          "clusterContractEndpoint": "https://cluster1.example.com/contract",
+          "offers": [
+            {
+              "offerID": "offer1",
+              "offerName": "Offer 1",
+              "offerType": "Type 1",
+              "clusterPrettyName": "Cluster 1",
+              "description": "Offer 1 description",
+              "plans": [
+                {
+                  "planID": "plan1",
+                  "planName": "Plan 1",
+                  "planCost": 10.99,
+                  "planCostCurrency": "USD",
+                  "planCostPeriod": "monthly",
+                  "planQuantity": 1,
+                  "resources": {
+                    "cpu": "2",
+                    "memory": "4GB",
+                    "storage": "100GB",
+                    "gpu": "N/A"
+                  }
+                }
+              ],
+              "created": 1623753566000,
+              "status": true,
+              "clusterID": "cluster1"
+            }
+          ]
+        }
+      },
+      "StatusResponse": {
+        "type": "object",
+        "properties": {
+          "status": {
+            "type": "string"
+          }
+        },
+        "example": {
+          "status": "OK"
+        }
+      },
+      "ErrorResponse": {
+        "type": "object",
+        "properties": {
+          "error": {
+            "type": "string"
+          }
+        },
+        "example": {
+          "error": "An error occurred"
+        }
+      }
+    }
+  }
+}

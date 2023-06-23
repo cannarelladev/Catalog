@@ -40,8 +40,8 @@ type BrokerHandler struct {
 	offersHandler     connector.OffersHandler
 }
 
-func InitBrokerHandler(mClient *mongo.Client, catalogConnector *connectorv1alpha1.CatalogConnector) *BrokerHandler {
-	brokersCollection := mClient.Database(MONGODB_DB).Collection(MONGODB_BROKER_COLLECTION)
+func InitBrokerHandler(mDatabase *mongo.Database, catalogConnector *connectorv1alpha1.CatalogConnector) *BrokerHandler {
+	brokersCollection := mDatabase.Collection(MONGODB_BROKER_COLLECTION)
 	return &BrokerHandler{
 		brokersCollection: brokersCollection,
 		catalogConnector:  catalogConnector,

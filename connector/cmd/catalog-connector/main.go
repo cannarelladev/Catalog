@@ -42,14 +42,15 @@ import (
 )
 
 const (
-	baseApiPath          = "/api" // base path of REST API
-	grpcDefaultPort      = 6001   // default port for gRPC server
-	httpDefaultPort      = 6002   // default port for HTTP server
-	mongoDefaultPort     = 27017  // default port for MongoDB server
-	grpcDefaultEndpoint  = ""     // default endpoint for gRPC server
-	httpDefaultEndpoint  = ""     // default endpoint for HTTP server
-	mongoDefaultEndpoint = ""     // default endpoint for MongoDB server
+	baseApiPath          = "/api"      // base path of REST API
+	grpcDefaultPort      = 6001        // default port for gRPC server
+	httpDefaultPort      = 6002        // default port for HTTP server
+	mongoDefaultPort     = 27017       // default port for MongoDB server
+	grpcDefaultEndpoint  = ""          // default endpoint for gRPC server
+	httpDefaultEndpoint  = ""          // default endpoint for HTTP server
+	mongoDefaultEndpoint = "localhost" // default endpoint for MongoDB server
 	mongoBaseEndpoint    = "mongodb://"
+	mongoDefaultDatabase = "catalog-connector" // default database name for MongoDB server
 )
 
 var (
@@ -57,6 +58,7 @@ var (
 	httpPort      = flag.Int("http-port", httpDefaultPort, "The HTTP server port")
 	mongoPort     = flag.Int("mongo-port", mongoDefaultPort, "The MongoDB server port")
 	mongoEndpoint = flag.String("mongo-endpoint", mongoDefaultEndpoint, "The MongoDB server endpoint")
+	mongoDatabase = flag.String("mongo-database", mongoDefaultDatabase, "The MongoDB server database name")
 	mongoUsername = flag.String("mongo-username", "", "The MongoDB server username")
 	mongoPassword = flag.String("mongo-password", "", "The MongoDB server password")
 	grpcEndpoint  = flag.String("grpc-endpoint", grpcDefaultEndpoint, "The gRPC server endpoint")
@@ -97,21 +99,23 @@ func main() {
 		klog.Fatal(err)
 	}
 
+	mongoDatabase := mongoClient.Database(*mongoDatabase)
+
 	// Init Catalog Connector (pkg/connector)
 	log.Print("Creating Catalog Connector")
 	catalogConnector := connector.InitCatalogConnector(CRClient, KClient)
 
 	// Init HTTP Handlers
 	log.Print("\tInitializing Broker Handler")
-	brokerHandler := broker.InitBrokerHandler(mongoClient, catalogConnector)
+	brokerHandler := broker.InitBrokerHandler(mongoDatabase, catalogConnector)
 	log.Print("\tInitializing Offer Handler")
-	offersHandler := offers.InitOffersHandler(mongoClient, catalogConnector)
+	offersHandler := offers.InitOffersHandler(mongoDatabase, catalogConnector)
 	log.Print("\tInitializing Contract Handler")
-	contractsHandler := contracts.InitContractsHandler(mongoClient, catalogConnector)
+	contractsHandler := contracts.InitContractsHandler(mongoDatabase, catalogConnector)
 	log.Print("\tInitializing WebSocket Handler")
 	websocketHandler := ws.InitWebsocketHandler(catalogConnector)
 	log.Print("\tInitializing Connector Handler")
-	connectorHandler := connector.InitConnectorHandler(mongoClient, catalogConnector)
+	connectorHandler := connector.InitConnectorHandler(mongoDatabase, catalogConnector)
 	log.Print("\tInitializing Liqo Controller Handler")
 	liqoControllerHandler := liqocontroller.InitLiqoControllerHandler(catalogConnector)
 

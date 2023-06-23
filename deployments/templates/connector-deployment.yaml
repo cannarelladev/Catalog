@@ -42,6 +42,9 @@ spec:
             {{- if .Values.connector.config.mongoPort }}
             - --mongo-port={{ .Values.connector.config.mongoPort }}
             {{- end }}
+            {{- if .Values.connector.config.mongoDatabase }}
+            - --mongo-database={{ .Values.connector.config.mongoDatabase }}
+            {{- end }}
             {{- if .Values.connector.config.mongoCredentials }}
             {{- if .Values.connector.config.mongoCredentials.username }}
             - --mongo-username={{ .Values.connector.config.mongoCredentials.username }}

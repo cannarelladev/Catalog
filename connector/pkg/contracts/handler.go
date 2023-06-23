@@ -34,6 +34,7 @@ import (
 )
 
 const (
+	//TODO: move to config
 	MONGODB_DB                  = "catalog-connector"
 	MONGODB_CONTRACT_COLLECTION = "contracts"
 )
@@ -44,8 +45,8 @@ type ContractsHandler struct {
 	offersHandler       connector.OffersHandler
 }
 
-func InitContractsHandler(mClient *mongo.Client, catalogConnector *connectorv1alpha1.CatalogConnector) *ContractsHandler {
-	contractsCollection := mClient.Database(MONGODB_DB).Collection(MONGODB_CONTRACT_COLLECTION)
+func InitContractsHandler(mDatabase *mongo.Database, catalogConnector *connectorv1alpha1.CatalogConnector) *ContractsHandler {
+	contractsCollection := mDatabase.Collection(MONGODB_CONTRACT_COLLECTION)
 	return &ContractsHandler{
 		contractsCollection: contractsCollection,
 		catalogConnector:    catalogConnector,

@@ -28,6 +28,8 @@ connector:
     mongoEndpoint: <YOUR-MONGO-ENDPOINT>
     # -- The MongoDB port that hosts the connector's database
     mongoPort: 27017
+    # -- The MongoDB database name
+    mongoDatabase: catalog-connector
     # The MongoDB credentials. you must specify at least the user and the password
     mongoCredentials: 
       # -- The MongoDB database user

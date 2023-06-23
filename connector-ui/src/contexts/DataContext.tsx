@@ -16,7 +16,7 @@ import { catalogToOffersMapper, populateOffersDetails } from '../utils';
 import { SessionContext } from './SessionContext';
 
 const api = 'api/';
-const wsEndpoint = window.location.hostname;
+const wsEndpoint = window.location.host;
 
 interface IDataContext {
   clusterParameters: Provider;
@@ -140,7 +140,7 @@ const DataContextProvider: FC<PropsWithChildren<{}>> = ({
   };
 
   const wsConnect = () => {
-    const ws = new WebSocket(`ws://${wsEndpoint}:6002/${api}subscribe`);
+    const ws = new WebSocket(`ws://${wsEndpoint}/${api}subscribe`);
     ws.onopen = () => {
       console.log('WebSocket Client Connected');
     };

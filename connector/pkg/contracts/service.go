@@ -18,10 +18,11 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"log"
 	"net/http"
 
-	contractsv1alpha1 "connector/apis/contracts/v1alpha1"
 	connectorv1alpha1 "connector/apis/connector/v1alpha1"
+	contractsv1alpha1 "connector/apis/contracts/v1alpha1"
 
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
@@ -67,8 +68,9 @@ func makeRequest(seller connectorv1alpha1.Provider, offerID, buyerID, planID str
 	// TODO: maybe need to send the response back to the buyer without parsing it
 	if res.StatusCode != 200 {
 		var body []map[string]interface{}
+		log.Println(res.Body)
 		if err := json.NewDecoder(res.Body).Decode(&body); err != nil {
-			return nil, fmt.Errorf(`{"error":"parsing body: %s"}`, err)
+			return nil, fmt.Errorf(`{"error":"parsing body: %s"}`, body)
 		}
 		return nil, fmt.Errorf(`{"error":"unexpected status code: %d - message: %v"}`, res.StatusCode, body)
 	}

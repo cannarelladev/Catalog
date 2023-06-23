@@ -30,7 +30,6 @@ import (
 
 const (
 	liqoNamespace               = "liqo"
-	MONGODB_DB                  = "catalog-connector"
 	MONGODB_BROKER_COLLECTION   = "brokers"
 	MONGODB_OFFER_COLLECTION    = "offers"
 	MONGODB_CONTRACT_COLLECTION = "contracts"
@@ -43,8 +42,8 @@ type ConnectorHandler struct {
 	brokerHandler    BrokerHandler
 }
 
-func InitConnectorHandler(mClient *mongo.Client, catalogConnector *connectorv1alpha1.CatalogConnector) *ConnectorHandler {
-	infoCollection := mClient.Database(MONGODB_DB).Collection(MONGODB_INFO_COLLECTION)
+func InitConnectorHandler(mDatabase *mongo.Database, catalogConnector *connectorv1alpha1.CatalogConnector) *ConnectorHandler {
+	infoCollection := mDatabase.Collection(MONGODB_INFO_COLLECTION)
 	return &ConnectorHandler{
 		infoCollection:   infoCollection,
 		catalogConnector: catalogConnector,

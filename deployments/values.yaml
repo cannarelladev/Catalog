@@ -25,7 +25,7 @@ connector:
     # -- The http port for the http server of the connector
     httpPort: 6002
     # -- The MongoDB endpoint that hosts the connector's database
-    mongoEndpoint: <YOUR-MONGO-ENDPOINT>
+    mongoEndpoint: 
     # -- The MongoDB port that hosts the connector's database
     mongoPort: 27017
     # -- The MongoDB database name

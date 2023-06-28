@@ -219,12 +219,29 @@ To develop and test this project we used the following configuration:
 
 #### Clusters Setup
 
+You need to have two up and running Kubernetes clusters. 
+
+In our case we used two different clusters with [k3s](https://docs.k3s.io/installation)
+
 Install k3s on two different clusters without traefik:
 - Remember to change the `INSTALL_K3S_VERSION` to the right version of k3s that you want to install.
 - We are disabling traefik because we want to use nginx.
 
 ```
 curl -sfL https://get.k3s.io | INSTALL_K3S_VERSION=v1.25.9+k3s1 INSTALL_K3S_EXEC="--disable traefik" sh -s -
+```
+
+Copy the kubeconfig file to your home directory (replace `<YOUR-HOME-DIR-NAME>` with your home directory name):
+
+```
+mkdir .kube
+sudo cat /etc/rancher/k3s/k3s.yaml > /home/<YOUR-HOME-DIR-NAME>/.kube/config
+```
+
+Esportiamo la variabile d'ambiente `KUBECONFIG`:
+
+```
+export KUBECONFIG=/home/<YOUR-HOME-DIR-NAME>/.kube/config
 ```
 
 #### MongoDB Setup
@@ -280,7 +297,10 @@ cd catalog/deployments
 
 2. Try a dry run installation and check if the output is correct and there are no missing or incorrect values. Remember to use the right values locally configured in the `values.yaml` file or use `--set ...` to inline set your values.
 
-3. **Remember** to replace the namespace with the right one where you want to install the Connector.
+3. **Remember** to
+     - Replace the namespace with the right one where you want to install the Connector.
+     - Set the right values for the `mongodb` section.
+     - Set the right values for the host
 
 ```
 helm install connector catalog-connector/connector --namespace catalog --create-namespace --dry-run connector --values ./values.yaml
@@ -300,9 +320,9 @@ In this command we are setting the `controllerManager.config.resourcePluginAddre
 The following keys should be replaced with the right values:
 - `<INSTALLATION_TYPE>`: the installation types (e.g. k3s, kind, etc.). (check the [Liqo CLI Tool](https://docs.liqo.io/en/v0.8.1/installation/install.html) for the complete list of supported installation)
 - `<CLUSTERNAME>`: the name to assign to the cluster.
-- `<CONNECTOR_SERVICE_NAME>`: the name of the Connector service.
+- `<CONNECTOR_SERVICE_NAME>`: the name of the gRPC Connector service.
 - `<CONNECTOR_NAMESPACE>`: the namespace where the Connector is installed.
-- `<CONNECTOR_SERVICE_PORT>`: the port where the Connector service is exposed.
+- `<CONNECTOR_SERVICE_PORT>`: the port where the gRPC Connector service is exposed.
 
 ```bash
 liqoctl install <INSTALLATION_TYPE> --cluster-name <CLUSTERNAME> --set controllerManager.config.resourcePluginAddress=<CONNECTOR_SERVICE_NAME>.<CONNECTOR_NAMESPACE>:<CONNECTOR_SERVICE_PORT>
@@ -313,11 +333,6 @@ An example of the command to execute in our case is the following:
 ```bash
 liqoctl install k3s --cluster-name cluster-test --set controllerManager.config.resourcePluginAddress=connector-grpc.catalog:6001
 ```
-
-### 3) Connector & Connector-UI Configuration
-
-
-Install Liqo in both clusters. We suggest to use the official documentation to install it: [Liqo Official Documentation](https://docs.liqo.io/en/v0.8.1/installation/install.html).
 ## Usage
 
 ---
